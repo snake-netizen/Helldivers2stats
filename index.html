@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>THREAT DOSSIER // SUPER EARTH</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+  :root{
+    --bg:#0d1210;
+    --bg2:#131a17;
+    --panel:#161d1a;
+    --line:#2a3733;
+    --ink:#d8e0da;
+    --dim:#7c8c85;
+    --amber:#e8b23d;
+    --red:#c1432f;
+    --green:#4f8f6d;
+    --bug:#a8542c;
+    --bot:#3d6e8a;
+    --squid:#7b4fa0;
+    --seaf:#c9a13b;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:
+      repeating-linear-gradient(0deg, rgba(255,255,255,0.012) 0px, rgba(255,255,255,0.012) 1px, transparent 1px, transparent 3px),
+      var(--bg);
+    color:var(--ink);
+    font-family:'JetBrains Mono', monospace;
+    padding-bottom:60px;
+  }
+  a{color:inherit;}
+
+  /* HEADER */
+  header{
+    border-bottom:2px solid var(--amber);
+    padding:22px 24px 16px;
+    position:relative;
+    background:linear-gradient(180deg, var(--bg2), var(--bg));
+  }
+  .eyebrow{
+    font-size:11px;
+    letter-spacing:.25em;
+    color:var(--dim);
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:10px;
+  }
+  h1{
+    font-family:'Oswald', sans-serif;
+    font-weight:700;
+    font-size:clamp(28px,6vw,46px);
+    letter-spacing:.02em;
+    margin:0;
+    text-transform:uppercase;
+    color:#f2ede2;
+  }
+  h1 span{color:var(--amber);}
+  .sub{
+    color:var(--dim);
+    font-size:12.5px;
+    margin-top:6px;
+    max-width:640px;
+    line-height:1.5;
+  }
+  .stamp{
+    position:absolute;
+    top:20px; right:24px;
+    border:2px solid var(--red);
+    color:var(--red);
+    padding:4px 10px;
+    font-family:'Oswald',sans-serif;
+    font-weight:700;
+    letter-spacing:.15em;
+    font-size:12px;
+    transform:rotate(4deg);
+    opacity:.85;
+  }
+  @media(max-width:640px){ .stamp{display:none;} }
+
+  /* CONTROLS */
+  .controls{
+    position:sticky; top:0; z-index:10;
+    background:rgba(13,18,16,0.97);
+    backdrop-filter:blur(4px);
+    border-bottom:1px solid var(--line);
+    padding:12px 24px;
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    align-items:center;
+  }
+  .tab{
+    font-family:'Oswald',sans-serif;
+    text-transform:uppercase;
+    font-size:13px;
+    letter-spacing:.08em;
+    font-weight:600;
+    background:transparent;
+    border:1px solid var(--line);
+    color:var(--dim);
+    padding:8px 14px;
+    cursor:pointer;
+    transition:.15s;
+  }
+  .tab:hover{border-color:var(--amber); color:var(--ink);}
+  .tab.active{color:#0d1210; background:var(--amber); border-color:var(--amber);}
+  .tab[data-f="bug"].active{background:var(--bug); border-color:var(--bug); color:#fff;}
+  .tab[data-f="bot"].active{background:var(--bot); border-color:var(--bot); color:#fff;}
+  .tab[data-f="squid"].active{background:var(--squid); border-color:var(--squid); color:#fff;}
+  .tab[data-f="seaf"].active{background:var(--seaf); border-color:var(--seaf); color:#0d1210;}
+  .search{
+    margin-left:auto;
+    background:var(--bg2);
+    border:1px solid var(--line);
+    color:var(--ink);
+    padding:8px 12px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:13px;
+    min-width:180px;
+  }
+  .search:focus{outline:none; border-color:var(--amber);}
+  .count{
+    font-size:11px; color:var(--dim); letter-spacing:.1em; padding:0 4px;
+  }
+
+  /* FACTION SECTIONS */
+  main{padding:24px;}
+  .faction-block{margin-bottom:44px;}
+  .faction-head{
+    display:flex;
+    align-items:baseline;
+    gap:14px;
+    border-bottom:1px solid var(--line);
+    padding-bottom:8px;
+    margin-bottom:4px;
+  }
+  .faction-head h2{
+    font-family:'Oswald',sans-serif;
+    text-transform:uppercase;
+    font-size:22px;
+    letter-spacing:.05em;
+    margin:0;
+  }
+  .faction-block[data-f="bug"] .faction-head h2{color:var(--bug);}
+  .faction-block[data-f="bot"] .faction-head h2{color:var(--bot);}
+  .faction-block[data-f="squid"] .faction-head h2{color:var(--squid);}
+  .faction-block[data-f="seaf"] .faction-head h2{color:var(--seaf);}
+  .faction-desig{font-size:11px; color:var(--dim); letter-spacing:.15em;}
+  .faction-lore{
+    font-size:12px; color:var(--dim); max-width:720px; line-height:1.6; margin:10px 0 18px;
+  }
+
+  .sub-label{
+    font-family:'Oswald',sans-serif;
+    font-size:12.5px;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:var(--amber);
+    margin:22px 0 10px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .sub-label::after{
+    content:"";
+    flex:1;
+    height:1px;
+    background:var(--line);
+  }
+
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+    gap:10px;
+  }
+  .card{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-left:3px solid var(--line);
+    padding:12px 14px;
+    transition:.15s;
+  }
+  .faction-block[data-f="bug"] .card{border-left-color:var(--bug);}
+  .faction-block[data-f="bot"] .card{border-left-color:var(--bot);}
+  .faction-block[data-f="squid"] .card{border-left-color:var(--squid);}
+  .faction-block[data-f="seaf"] .card{border-left-color:var(--seaf);}
+  .card:hover{background:#1b2420; transform:translateY(-1px);}
+  .card-top{
+    display:flex; justify-content:space-between; align-items:flex-start; gap:8px; margin-bottom:6px;
+  }
+  .card h3{
+    font-family:'Oswald',sans-serif;
+    font-size:14.5px;
+    font-weight:600;
+    margin:0;
+    color:#f0ede4;
+    letter-spacing:.01em;
+  }
+  .tier{
+    font-size:9.5px;
+    letter-spacing:.1em;
+    padding:2px 6px;
+    border:1px solid var(--line);
+    color:var(--dim);
+    white-space:nowrap;
+    text-transform:uppercase;
+  }
+  .tier.heavy{color:var(--red); border-color:var(--red);}
+  .tier.elite{color:var(--amber); border-color:var(--amber);}
+  .tier.light{color:var(--green); border-color:var(--green);}
+  .card p{
+    font-size:11.5px;
+    color:var(--dim);
+    line-height:1.5;
+    margin:0 0 8px;
+  }
+  .threat{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    margin-top:6px;
+  }
+  .threat-label{
+    font-size:9px;
+    letter-spacing:.1em;
+    color:var(--dim);
+    text-transform:uppercase;
+    white-space:nowrap;
+  }
+  .threat-dots{
+    display:flex;
+    gap:3px;
+  }
+  .threat-dots span{
+    width:8px; height:8px;
+    background:var(--line);
+    border-radius:1px;
+  }
+  .threat-dots span.on{background:var(--red);}
+  .faction-block[data-f="seaf"] .threat-dots span.on{background:var(--green);}
+  .hidden{display:none !important;}
+
+  .disclaimer{
+    max-width:720px;
+    font-size:11px;
+    color:var(--dim);
+    line-height:1.6;
+    border-left:2px solid var(--amber);
+    padding:8px 12px;
+    margin:14px 24px 0;
+    background:var(--panel);
+  }
+
+  /* STATS PANEL */
+  .stats-wrap{padding:24px; padding-bottom:0;}
+  .stats-head{
+    display:flex; align-items:baseline; gap:14px;
+    border-bottom:1px solid var(--line);
+    padding-bottom:8px; margin-bottom:4px;
+  }
+  .stats-head h2{
+    font-family:'Oswald',sans-serif;
+    text-transform:uppercase;
+    font-size:22px; letter-spacing:.05em; margin:0;
+    color:var(--amber);
+  }
+  .stats-meta{font-size:11px; color:var(--dim); letter-spacing:.1em;}
+  .stats-note{
+    font-size:11px; color:var(--dim); line-height:1.6; margin:10px 0 16px; max-width:720px;
+  }
+  .stats-note a{color:var(--amber); text-decoration:none; border-bottom:1px dotted var(--amber);}
+  .stat-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+    gap:8px;
+    margin-bottom:8px;
+  }
+  .stat-row{
+    background:var(--panel);
+    border:1px solid var(--line);
+    padding:12px 14px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+  }
+  .stat-row .k{
+    font-size:11.5px;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    color:var(--dim);
+  }
+  .stat-row .v{
+    font-family:'Oswald',sans-serif;
+    font-weight:700;
+    font-size:16px;
+    color:#f2ede2;
+    white-space:nowrap;
+  }
+  .stat-row .v small{
+    font-family:'JetBrains Mono',monospace;
+    font-weight:400;
+    font-size:10.5px;
+    color:var(--dim);
+    margin-left:6px;
+  }
+  .stat-row.bug .v{color:var(--bug);}
+  .stat-row.bot .v{color:var(--bot);}
+  .stat-row.squid .v{color:var(--squid);}
+  .stat-row.kia .v{color:var(--red);}
+  .stat-row.kd .v{color:var(--green);}
+
+  footer{
+    text-align:center;
+    color:var(--dim);
+    font-size:11px;
+    letter-spacing:.1em;
+    padding:30px 20px 10px;
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="stamp">CLASSIFIED</div>
+  <div class="eyebrow">
+    <span>DEPARTMENT OF DEFENSE // SUPER EARTH</span>
+    <span>DOSSIER No. 2026-08</span>
+  </div>
+  <h1>Hostile <span>Faction Registry</span></h1>
+  <p class="sub">Full catalog of enemy units identified on the galactic warfront. Terminids, Automatons, and Illuminate, with their active subfactions as of Patch 7.0.0 "Devoid of Liberty".</p>
+  <p class="sub" style="margin-top:10px; font-size:11px;">Report any bugs to <a href="mailto:vrosnakee@gmail.com" style="color:var(--amber); border-bottom:1px dotted var(--amber); text-decoration:none;">vrosnakee@gmail.com</a></p>
+</header>
+
+<div class="stats-wrap">
+  <div class="stats-head">
+    <h2>Galactic Statistics</h2>
+    <span class="stats-meta">WAR No. 801 // REAL DATA</span>
+  </div>
+  <p class="stats-note">Real cumulative figures for the entire community since the start of the current Galactic War (War 801), pulled live from Arrowhead's war API (via <a href="https://helldiverstrainingmanual.com" target="_blank" rel="noopener">helldiverstrainingmanual.com</a>). This is global data across all Helldivers, not from a single account — personal stats like that aren't publicly exposed. Snapshot captured on August 17, 2026.</p>
+
+  <div class="stat-grid" id="statGrid"></div>
+</div>
+
+<script>
+const WAR_STATS = {
+  helldiversActive: 133907,
+  missionsWon: 992810641,
+  missionsLost: 96893088,
+  bugKills: 213970389972,
+  automatonKills: 114502117183,
+  illuminateKills: 73033684453,
+  bulletsFired: 1909327417876,
+  bulletsHit: 2089707296595,
+  deaths: 8592838660,
+  friendlies: 992281125,
+  missionSuccessRate: 91
+};
+
+function fmt(n){ return n.toLocaleString('en-US'); }
+
+(function renderStats(){
+  const totalMissions = WAR_STATS.missionsWon + WAR_STATS.missionsLost;
+  const totalKills = WAR_STATS.bugKills + WAR_STATS.automatonKills + WAR_STATS.illuminateKills;
+  const hitRatio = (WAR_STATS.bulletsHit / WAR_STATS.bulletsFired).toFixed(3);
+  const kdRatio = (totalKills / WAR_STATS.deaths).toFixed(2);
+  const friendlyPct = ((WAR_STATS.friendlies / WAR_STATS.deaths) * 100).toFixed(1);
+
+  const rows = [
+    ["Helldivers active (right now)", fmt(WAR_STATS.helldiversActive), ""],
+    ["Missions completed", fmt(WAR_STATS.missionsWon), `(${((WAR_STATS.missionsWon/totalMissions)*100).toFixed(2)}%)`],
+    ["Missions failed", fmt(WAR_STATS.missionsLost), `(${((WAR_STATS.missionsLost/totalMissions)*100).toFixed(2)}%)`],
+    ["Shots fired", fmt(WAR_STATS.bulletsFired), ""],
+    ["Projectile hits", fmt(WAR_STATS.bulletsHit), ""],
+    ["Hits-to-shot ratio", hitRatio + " : 1", ""],
+    ["Kill-to-death ratio (K/D)", kdRatio + " : 1", ""],
+    ["Dead Terminids", fmt(WAR_STATS.bugKills), "", "bug"],
+    ["Dead Automatons", fmt(WAR_STATS.automatonKills), "", "bot"],
+    ["Dead Illuminate", fmt(WAR_STATS.illuminateKills), "", "squid"],
+    ["Total kills (all 3 factions)", fmt(totalKills), "", ""],
+    ["Helldivers KIA", fmt(WAR_STATS.deaths), "", "kia"],
+    ["Friendly fire (accidentals)", fmt(WAR_STATS.friendlies), `(${friendlyPct}% of own casualties)`],
+  ];
+
+  const grid = document.getElementById('statGrid');
+  rows.forEach(([label, value, extra, cls])=>{
+    const row = document.createElement('div');
+    row.className = 'stat-row' + (cls ? ' ' + cls : '');
+    row.innerHTML = `<span class="k">${label}</span><span class="v">${value}${extra ? `<small>${extra}</small>` : ''}</span>`;
+    grid.appendChild(row);
+  });
+})();
+</script>
+
+<p class="disclaimer" style="margin:20px 24px 0;">⚠ CLASSIFICATION NOTE: no real per-unit kill ratios exist (only faction-wide totals, shown above). The "THREAT INDEX" in the dossier below is a rough estimate (1-5) based on each unit type's toughness and lethality, not an official Arrowhead statistic.</p>
+
+<div class="controls">
+  <button class="tab active" data-f="all">All</button>
+  <button class="tab" data-f="bug">Terminids</button>
+  <button class="tab" data-f="bot">Automatons</button>
+  <button class="tab" data-f="squid">Illuminate</button>
+  <button class="tab" data-f="seaf">Super Earth</button>
+  <input class="search" id="search" placeholder="Search unit...">
+  <span class="count" id="count"></span>
+</div>
+
+<main id="main"></main>
+
+<footer>END OF DOSSIER — GLORY TO SUPER EARTH — MANAGED DEMOCRACY</footer>
+
+<script>
+const DATA = {
+  bug: {
+    name: "Terminids",
+    desig: "INSECTOID SWARM // EASTERN SECTOR",
+    lore: "Successors of the bugs from the First Galactic War. After years of selective breeding altered their physiology, they escaped the Element-710 farms and now spread unchecked.",
+    groups: [
+      { label: "Main swarm", units: [
+        ["Scavenger","light","The lowliest Terminid, slow and weak, but attracts nearby bug breaches.",2],
+        ["Bile Spitter","light","One of the smallest Terminids, still deadly with its ranged acid spit.",2],
+        ["Pouncer","light","Agile Terminid able to leap great distances to attack.",2],
+        ["Hunter","light","Stealthy ambush Terminid, leaps far and slows Helldivers with its tongue.",2],
+        ["Shrieker","light","Flying Terminid specialized in hit-and-run tactics.",2],
+        ["Warrior","light","Medium-sized Terminid adept in close-quarters combat.",2],
+        ["Bile Warrior","elite","Mutated Warrior variant that explodes on death.",4],
+        ["Alpha Warrior","elite","Faster, deadlier Warrior variant summoned by Alpha Commanders.",4],
+        ["Hive Guard","elite","Warrior variant with medium armor on head and legs.",4],
+        ["Nursing Spewer","elite","Slow, armored Terminid that spews corrosive bile over a wide area.",4],
+        ["Bile Spewer","elite","Armored Nursing Spewer variant that launches bile mortars.",4],
+        ["Brood Commander","elite","Leadership-class Terminid, coordinates attacks and deploys reinforcements.",4],
+        ["Alpha Commander","elite","Heavier Brood Commander variant, calls in Alpha Warriors.",4],
+        ["Stalker","elite","Specialized Terminid that turns partially invisible to ambush. Spawns from Stalker Lairs.",4],
+        ["Charger","heavy","Fast charging Terminid, covered head to claw in heavy armor.",5],
+        ["Spore Charger","heavy","Charger variant that creates a thick fog and a massive explosion on death.",5],
+        ["Charger Behemoth","heavy","Charger variant with even more durable armor.",5],
+        ["Impaler","heavy","Heavily armored Terminid using bladed tentacles to disrupt Helldiver movement.",5],
+        ["Bile Titan","heavy","Massive Terminid with a potent bile attack, stomp attacks, and heavy armor.",5],
+        ["Dragonroach","heavy","Massive flying Terminid with a potent fire-breath attack and heavy armor.",5],
+        ["Hive Lord","heavy","Gigantic Terminid that travels underground, expelling bile and crushing targets.",5],
+      ]},
+      { label: "Predator Strain", units: [
+        ["Predator Hunter","elite","Mutated, far more aggressive Hunter variant, able to cloak and spit bile.",4],
+        ["Predator Stalker","elite","Mutated, more aggressive Stalker variant, can't cloak but patrols in groups.",4],
+      ]},
+      { label: "Spore Burst Strain", units: [
+        ["Spore Burst Scavenger","light","Scavenger variant that explodes into a deadly spore cloud on death.",2],
+        ["Spore Burst Hunter","light","Hunter variant that explodes into a deadly spore cloud on death.",2],
+        ["Spore Burst Warrior","elite","Warrior variant that explodes into a deadly spore cloud on death.",4],
+        ["Spore Burst Bile Titan","heavy","Bile Titan variant with a potent spew that buffs nearby enemies.",5],
+      ]},
+      { label: "Rupture Strain", units: [
+        ["Rupture Warrior","elite","Burrowing Warrior variant.",4],
+        ["Rupture Spewer","elite","Burrowing Bile Spewer variant.",4],
+        ["Rupture Charger","heavy","Burrowing Charger variant.",5],
+      ]},
+    ]
+  },
+  bot: {
+    name: "Automatons",
+    desig: "MECHANIZED LEGION // WESTERN SECTOR (CYBERSTAN)",
+    lore: "Children of the Cyborgs, sharing their goal of declaring independence from Super Earth. They attack with heavily armored but slow-moving infantry and vehicles, backed by fragile light infantry.",
+    groups: [
+      { label: "Main legion", units: [
+        ["Trooper","light","Light unit armed with a fusion SMG and explosive grenades.",2],
+        ["Brawler","light","Light unit with dual heated blades, specialized in close-quarters combat.",2],
+        ["Commissar","light","Light squad leader armed with sidearm and heat blade.",2],
+        ["Rocket Raider","light","Light unit armed with a rocket launcher.",2],
+        ["Assault Raider","light","Light unit with a fusion pistol, a blade, and a jetpack.",2],
+        ["Marauder","elite","Reinforced unit armed with a fusion rifle and explosive grenades.",4],
+        ["MG Raider","elite","Reinforced unit with a fusion machine gun and a volatile backpack prone to exploding.",4],
+        ["Berserker","elite","Durable unit with dual chainsaws, specialized in close-quarters combat.",4],
+        ["Devastator","elite","Medium-armored unit armed with fusion assault cannons.",4],
+        ["Rocket Devastator","elite","Variant with arm cannons and shoulder-mounted rockets, hits behind cover.",4],
+        ["Heavy Devastator","elite","Variant with a fusion machine gun and a large shield, suppresses and blocks fire.",4],
+        ["Scout Strider","elite","Armored recon walker, manned by a Trooper shielded from the front.",4],
+        ["Reinforced Scout Strider","elite","Reinforced Scout Strider variant with rockets and full pilot armor.",4],
+        ["Hulk Obliterator","heavy","Large, heavily armored unit with dual rocket launchers.",5],
+        ["Hulk Scorcher","heavy","Hulk variant with a heavy flamethrower and sawblade, close-quarters focus.",5],
+        ["Hulk Bruiser","heavy","Hulk variant with a burst rocket launcher and fusion autocannon.",5],
+        ["War Strider","heavy","Heavily armored walker with heavy repeaters and grenade launchers.",5],
+        ["Annihilator Tank","heavy","Armored tank with fusion machine guns and a large cannon.",5],
+        ["Shredder Tank","heavy","Tank variant with a quad-linked heavy fusion cycler turret.",5],
+        ["Barrager Tank","heavy","Tank variant with a missile array capable of direct and mortar fire.",5],
+        ["Gunship","heavy","Medium-armored flying unit armed with fusion machine guns and rockets.",5],
+        ["Dropship","heavy","Transport ship that drops in reinforcements after a bot-drop flare.",5],
+        ["Factory Strider","heavy","Massive quad-walker with fusion gatlings and a burst cannon; deploys Devastators.",5],
+      ]},
+      { label: "Jet Brigade", units: [
+        ["Jet Brigade Commissar","elite","Commissar with a jetpack for leaping great distances.",4],
+        ["Jet Brigade Trooper","light","Trooper with a jetpack for leaping great distances.",2],
+        ["Jet Brigade MG Raider","elite","MG Raider with a jetpack for leaping great distances.",4],
+        ["Jet Brigade Devastator","elite","Devastator with a jetpack for leaping great distances.",4],
+        ["Jet Brigade Hulk Scorcher","heavy","Hulk Scorcher fitted with a large jetpack.",5],
+        ["Jet Brigade Hulk Bruiser","heavy","Hulk Bruiser fitted with a large jetpack.",5],
+      ]},
+      { label: "Incineration Corps", units: [
+        ["Pyro Trooper","elite","Reinforced unit equipped with a flamethrower and a backpack fuel tank.",4],
+        ["Incendiary Rocket Raider","light","Light unit with a specialized incendiary rocket launcher.",2],
+        ["Incendiary MG Devastator","elite","Heavy Devastator variant with a slower-firing incendiary machine gun.",4],
+        ["Conflagration Devastator","elite","Devastator with an incendiary fusion shotgun and a large shield.",4],
+        ["Hulk Firebomber","heavy","Hulk with a large flamethrower and an incendiary grenade launcher.",5],
+      ]},
+      { label: "Cyborg Legion", units: [
+        ["Radical","elite","Cybernetically enhanced human soldiers with a heavy shotgun and \"techno-martial arts\".",4],
+        ["Agitator","elite","Cyborg field commanders, able to directly command their Automaton underlings.",4],
+        ["Vox Engine","heavy","Massive Cyborg mech with heavy fusion cannons, a missile array, and gatlings.",5],
+      ]},
+    ]
+  },
+  squid: {
+    name: "Illuminate",
+    desig: "INVASION FLEET // SOUTHERN SECTOR",
+    lore: "An ancient race, once thought entirely wiped out after their defeat in the First Galactic War. They've returned to avenge the genocide of their ancestors, wielding energy shields, jetpacks, plasma weapons, and drones.",
+    groups: [
+      { label: "Main forces", units: [
+        ["Voteless","light","Agile skirmisher unit that attacks in hordes.",2],
+        ["Watcher","light","Flying drone with arc weaponry, able to call for reinforcements.",2],
+        ["Overseer","elite","Elite unit with an energy shield and an explosive lance; usually escorts Voteless hordes.",4],
+        ["Elevated Overseer","elite","Elite unit with automatic plasma rifles and a jetpack.",4],
+        ["Crescent Overseer","elite","Elite unit with a large plasma cannon, direct and mortar fire.",4],
+        ["Fleshmob","heavy","Amalgam of Voteless corpses; close-quarters specialist, charges at Helldivers.",5],
+        ["Harvester","heavy","Massive autonomous tripod with an energy shield and a large laser weapon.",5],
+        ["Stingray","heavy","Flying unit that runs strafing passes, dealing massive area damage.",5],
+        ["Warp Ship","heavy","Transport ship used to deploy Illuminate reinforcements.",5],
+        ["Leviathan","heavy","Heavily armored flying unit, armed with beam cannons and bomb bays.",5],
+        ["Illuminate Overship","heavy","Unarmed mother ships that act as ground command centers.",5],
+      ]},
+      { label: "Appropriators", units: [
+        ["Veracitor","elite","Piloted Illuminate war machine with arm-like appendages.",4],
+        ["Gatekeeper","elite","Piloted war machine with plasma guns and reinforced armor.",4],
+        ["Obtruder","light","Swarming drones that fire plasma projectiles and travel in groups.",2],
+      ]},
+      { label: "Vote Snatchers", units: [
+        ["Wretch","light","Agile unit that closes distance fast and dodges incoming fire.",2],
+        ["Crusher","heavy","Very tough unit capable of regenerating if given space.",5],
+      ]},
+    ]
+  },
+  seaf: {
+    name: "Super Earth",
+    desig: "ALLIED FORCES // FEDERATION OF SUPER EARTH",
+    lore: "Super Earth's armed forces and civilians a Helldiver may run into on the battlefield. Not hostile, but friendly fire is a real risk.",
+    groups: [
+      { label: "Allied personnel", units: [
+        ["Civilian","light","Unarmed Super Earth citizens, usually found fleeing danger.",1],
+        ["SEAF Soldier","elite","Lightly armored ground troops, armed with rifles, SMGs, machine guns, disposable anti-tank launchers, and grenades.",2],
+        ["Helldiver","heavy","Super Earth's elite fighting force. Equippable with a wide range of weapons, stratagems, and tactics.",5],
+      ]},
+    ]
+  }
+};
+
+const main = document.getElementById('main');
+const countEl = document.getElementById('count');
+let totalAll = 0;
+
+function render(){
+  main.innerHTML = '';
+  Object.entries(DATA).forEach(([key, fac])=>{
+    const block = document.createElement('div');
+    block.className = 'faction-block';
+    block.dataset.f = key;
+
+    const head = document.createElement('div');
+    head.className = 'faction-head';
+    head.innerHTML = `<h2>${fac.name}</h2><span class="faction-desig">${fac.desig}</span>`;
+    block.appendChild(head);
+
+    const lore = document.createElement('p');
+    lore.className = 'faction-lore';
+    lore.textContent = fac.lore;
+    block.appendChild(lore);
+
+    fac.groups.forEach(group=>{
+      const label = document.createElement('div');
+      label.className = 'sub-label';
+      label.textContent = group.label;
+      block.appendChild(label);
+
+      const grid = document.createElement('div');
+      grid.className = 'grid';
+      group.units.forEach(([name, tier, desc, threat])=>{
+        totalAll++;
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.dataset.name = name.toLowerCase();
+        const tierLabel = tier === 'heavy' ? 'HEAVY' : tier === 'elite' ? 'ELITE' : 'LIGHT';
+        const dots = Array.from({length:5}, (_,i)=> `<span class="${i < threat ? 'on' : ''}"></span>`).join('');
+        card.innerHTML = `
+          <div class="card-top">
+            <h3>${name}</h3>
+            <span class="tier ${tier}">${tierLabel}</span>
+          </div>
+          <p>${desc}</p>
+          <div class="threat">
+            <span class="threat-label">Threat</span>
+            <div class="threat-dots">${dots}</div>
+          </div>`;
+        grid.appendChild(card);
+      });
+      block.appendChild(grid);
+    });
+
+    main.appendChild(block);
+  });
+  updateCount();
+}
+
+function updateCount(){
+  const visible = main.querySelectorAll('.card:not(.hidden)').length;
+  countEl.textContent = `${visible} / ${totalAll} UNITS`;
+}
+
+let activeFilter = 'all';
+document.querySelectorAll('.tab').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    activeFilter = btn.dataset.f;
+    applyFilters();
+  });
+});
+
+document.getElementById('search').addEventListener('input', applyFilters);
+
+function applyFilters(){
+  const q = document.getElementById('search').value.trim().toLowerCase();
+  document.querySelectorAll('.faction-block').forEach(block=>{
+    const facMatch = activeFilter === 'all' || block.dataset.f === activeFilter;
+    block.classList.toggle('hidden', !facMatch);
+    if(!facMatch) return;
+    let anyVisibleInBlock = false;
+    block.querySelectorAll('.sub-label').forEach(label=>{
+      const grid = label.nextElementSibling;
+      let anyInGroup = false;
+      grid.querySelectorAll('.card').forEach(card=>{
+        const match = !q || card.dataset.name.includes(q);
+        card.classList.toggle('hidden', !match);
+        if(match) anyInGroup = true;
+      });
+      label.classList.toggle('hidden', !anyInGroup);
+      grid.classList.toggle('hidden', !anyInGroup);
+      if(anyInGroup) anyVisibleInBlock = true;
+    });
+    block.classList.toggle('hidden', !anyVisibleInBlock);
+  });
+  updateCount();
+}
+
+render();
+</script>
+</body>
+</html>
